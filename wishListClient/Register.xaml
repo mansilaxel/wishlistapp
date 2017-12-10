@@ -1,0 +1,36 @@
+﻿<Page
+    x:Class="wishListClient.Register"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:wishListClient"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Naam: "></TextBlock>
+                <TextBox x:Name="firstname"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Achternaam: "></TextBlock>
+                <TextBox x:Name="secondname"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="email: "></TextBlock>
+                <TextBox x:Name="email"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="pw: "></TextBlock>
+                <TextBox x:Name="password" Text=""/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="pw herhalen: "></TextBlock>
+                <TextBox/>
+            </StackPanel>
+            <Button Click="Button_Click" Content="Registreren"/>
+        </StackPanel>
+        
+    </Grid>
+</Page>
