@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using wishListClient.Services;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,25 +30,42 @@ namespace wishListClient
         public Hoofdscherm()
         {
             this.InitializeComponent();
+            //UserService userService = new UserService();
+            //User authUser = userService.GetUserDetails(Globals.LoggedInUser);
+            //if(authUser == null)
+            //{
+                
+            //    Frame.Navigate(typeof(MainPage));
+            //}
+            //Globals.LoggedInUser = authUser;
+
         }
 
         private async void ToonMijnLijsten(object sender, RoutedEventArgs e)
         {
             HttpClient client = new HttpClient();
+            //var current = Globals.LoggedInUser;
+            //var id = current.Id;
+            //signed in user(later invullen) ipv hardcode.
             var json = await client.GetStringAsync(new Uri("http://localhost:51656/api/users/4/wishlists"));
             var lst = JsonConvert.DeserializeObject<ObservableCollection<WishList>>(json);
             lv.ItemsSource = lst;
             //Frame.Navigate(typeof(MijnLijsten));
         }
 
-        private void ToonDeelnames(object sender, RoutedEventArgs e)
+        private async void ToonDeelnames(object sender, RoutedEventArgs e)
         {
+           
+           
 
         }
 
-        private void ToonMijnCategorieen(object sender, RoutedEventArgs e)
+        private async void ToonMijnCategorieen(object sender, RoutedEventArgs e)
         {
-
+            HttpClient client = new HttpClient();
+            var json = client.GetStringAsync(new Uri("http://localhost:51656/api/users/1/MyWishCategories")).Result;
+            var lst = JsonConvert.DeserializeObject<ObservableCollection<WishCategory>>(json);
+            lv.ItemsSource = lst;
         }
     }
 }

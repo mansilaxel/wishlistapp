@@ -8,9 +8,10 @@ using wishListBackend.Models;
 namespace wishListBackend.Migrations
 {
     [DbContext(typeof(wishListContext))]
-    partial class wishListContextModelSnapshot : ModelSnapshot
+    [Migration("20171212093946_name")]
+    partial class name
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")

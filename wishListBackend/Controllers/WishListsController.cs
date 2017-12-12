@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using wishListBackend;
 using wishListBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace wishListBackend.Controllers
 {
     [Produces("application/json")]
     [Route("api/WishLists")]
+    [Authorize]
     public class WishListsController : Controller
     {
         private readonly wishListContext _context;

@@ -17,5 +17,11 @@ namespace wishListClient
         public List<ParticipantOnWishList> ParticipantOnWishLists { get; set; }
         public List<WishCategory> MyWishCategories { get; set; }
         public List<Wish> MyPurchases { get; set; }
+
+
+        public void NewWishCategory(List<WishCategory> wishCategories)
+        {
+            MyWishCategories = wishCategories;
+        }
     }
 }

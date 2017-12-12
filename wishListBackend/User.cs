@@ -16,5 +16,14 @@ namespace wishListBackend
         public List<ParticipantOnWishList> ParticipantOnWishLists { get; set; }
         public List<WishCategory> MyWishCategories { get; set; }
         public List<Wish> MyPurchases { get; set; }
+
+        public void AddWishList(WishList wishList)
+        {
+            MyWishLists.Add(wishList);
+        }
+
+        
     }
+
+    
 }

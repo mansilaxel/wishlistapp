@@ -27,6 +27,14 @@ namespace wishListBackend.Controllers
         {
             return _context.WishCategory;
         }
+        // GET: api/users/userid/MyWishCategories
+        [HttpGet]
+        [Route("~/api/users/{userId}/MyWishCategories")]
+        public IEnumerable<WishCategory> GetMyWishCategories([FromRoute] int userId)
+        {
+            var user = _context.User.Include(u=>u.MyWishCategories).FirstOrDefault(u => u.Id == userId);
+            return user.MyWishCategories;
+        }
 
         // GET: api/WishCategories/5
         [HttpGet("{id}")]

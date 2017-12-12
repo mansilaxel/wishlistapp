@@ -38,7 +38,7 @@ namespace wishListClient
             {
                 new MessageDialog("Username already exists").ShowAsync();                
                 return;
-            }
+            }            
 
             Globals.LoggedInUser = user;
             new MessageDialog("Registration successful").ShowAsync();

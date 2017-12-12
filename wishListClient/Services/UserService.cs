@@ -52,7 +52,7 @@ namespace wishListClient.Services
             //WebClient wc = new WebClient();
             httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(access_token);
-            //wc.Headers["Authorization"] = access_token;
+            //wc.Headers["Authorization"] = access_token;           
             try
             {
                 //string response = wc.DownloadString(endpoint);
@@ -86,6 +86,7 @@ namespace wishListClient.Services
                 {
                     string data = response.Content.ReadAsStringAsync().Result;
                     User user = JsonConvert.DeserializeObject<User>(data);
+
                     return user;
                 }
                 return null;
