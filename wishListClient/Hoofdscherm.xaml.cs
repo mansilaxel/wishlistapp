@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -41,16 +42,17 @@ namespace wishListClient
 
         }
 
-        private async void ToonMijnLijsten(object sender, RoutedEventArgs e)
+        private void ToonMijnLijsten(object sender, RoutedEventArgs e)
         {
-            HttpClient client = new HttpClient();
+            //HttpClient client = new HttpClient();
             //var current = Globals.LoggedInUser;
             //var id = current.Id;
             //signed in user(later invullen) ipv hardcode.
-            var json = await client.GetStringAsync(new Uri("http://localhost:51656/api/users/4/wishlists"));
-            var lst = JsonConvert.DeserializeObject<ObservableCollection<WishList>>(json);
-            lv.ItemsSource = lst;
-            //Frame.Navigate(typeof(MijnLijsten));
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Globals.LoggedInUser.access_token.ToString());
+            //var json = await client.GetStringAsync(new Uri("http://localhost:51656/api/MyWishLists"));
+            //var lst = JsonConvert.DeserializeObject<ObservableCollection<WishList>>(json);
+            //lv.ItemsSource = lst;
+            Frame.Navigate(typeof(MijnLijsten));
         }
 
         private async void ToonDeelnames(object sender, RoutedEventArgs e)

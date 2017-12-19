@@ -57,6 +57,8 @@ namespace wishListBackend
 
             });
 
+        
+
             services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
 
             //services.Configure<IdentityOptions>(options =>
@@ -81,6 +83,7 @@ namespace wishListBackend
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+
             // secretKey contains a secret passphrase only your server knows
             var secretKey = Configuration.GetSection("JWTSettings:SecretKey").Value;
             var issuer = Configuration.GetSection("JWTSettings:Issuer").Value;
@@ -99,17 +102,14 @@ namespace wishListBackend
                 ValidateAudience = true,
                 ValidAudience = audience
             };
-            app.UseJwtBearerAuthentication(new JwtBearerOptions
+
+            app.UseJwtBearerAuthentication(new JwtBearerOptions()
             {
+                Audience = audience,                
+                AutomaticAuthenticate = true,
                 TokenValidationParameters = tokenValidationParameters
             });
 
-
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AutomaticAuthenticate = false,
-                AutomaticChallenge = false
-            });
 
             app.UseMvc();
 

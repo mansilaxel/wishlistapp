@@ -31,12 +31,14 @@ namespace wishListBackend.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/users/{userId}/WishLists")]
-        public IEnumerable<WishList> GetMyWishLists([FromRoute] int userId)
+        [Route("~/api/MyWishLists")]
+        public IEnumerable<WishList> GetMyWishLists()
         {
+            var id = int.Parse(User.Claims.SingleOrDefault(t => t.Type == "id")?.Value);
+
             var user = _context.User.Include("MyWishLists.Wishes")
                 .Include("MyWishLists.ParticipantOnWishLists.User")
-                .FirstOrDefault(u => u.Id == userId);
+                .FirstOrDefault(u => u.Id == id);
 
 
             return user.MyWishLists;
@@ -104,10 +106,18 @@ namespace wishListBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> PostWishList([FromBody] WishList wishList)
         {
+            var id = int.Parse(User.Claims.SingleOrDefault(t => t.Type == "id")?.Value);
+
+            var user = _context.User.Include("MyWishLists.Wishes")
+                .Include("MyWishLists.ParticipantOnWishLists.User")
+                .FirstOrDefault(u => u.Id == id);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            user.AddWishList(wishList);
 
             _context.WishList.Add(wishList);
             await _context.SaveChangesAsync();
@@ -119,6 +129,8 @@ namespace wishListBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWishList([FromRoute] int id)
         {
+
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

@@ -19,6 +19,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
+        <Button Content="Wenslijst maken" Click="MakeNewList"></Button>
     </StackPanel>
 </Page>

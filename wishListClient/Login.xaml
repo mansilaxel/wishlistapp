@@ -12,11 +12,11 @@
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Email: "></TextBlock>
-                <TextBox/>
+                <TextBox x:Name="email"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="PW: "></TextBlock>
-                <TextBox/>
+                <TextBox x:Name="pw"/>
             </StackPanel>
             <Button Click="Button_Click" Content="Aanmelden"/>
         </StackPanel>

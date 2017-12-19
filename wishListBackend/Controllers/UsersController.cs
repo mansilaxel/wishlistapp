@@ -12,6 +12,8 @@ using JWT;
 using JWT.Algorithms;
 using JWT.Serializers;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace wishListBackend.Controllers
 {
@@ -38,9 +40,11 @@ namespace wishListBackend.Controllers
         //dit zijn functies voor auth te doen werken
         private string GetAccessToken(User user)
         {
+            var id =  _context.User.SingleOrDefaultAsync(m => m.Email == user.Email).Result.Id;
+
             var payload = new Dictionary<string, object>
             {
-                { "id", user.Id },                
+                { "id", id },                
                 { "email", user.Email }
             };
             return GetToken(payload);
@@ -50,8 +54,13 @@ namespace wishListBackend.Controllers
 
         private string GetToken(Dictionary<string, object> payload)
         {
+            var claims = new[] 
+            {
+                    new Claim("email", payload.Last().Value.ToString()),
+                    new Claim("id", payload.First().Value.ToString())
+            };
             var secret = _options.SecretKey;
-
+            payload.Add("claims", claims);
             payload.Add("iss", _options.Issuer);
             payload.Add("aud", _options.Audience);
             payload.Add("nbf", ConvertToUnixTimestamp(DateTime.Now));
@@ -79,8 +88,9 @@ namespace wishListBackend.Controllers
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser([FromRoute] int id)
+        [Authorize]
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUser([FromRoute] string email)
         {
             if (!ModelState.IsValid)
             {
@@ -88,7 +98,7 @@ namespace wishListBackend.Controllers
             }
 
             var user = await _context.User.Include(u=>u.MyWishLists).Include(u=>u.MyWishCategories).Include(u=>u.MyPurchases)
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .SingleOrDefaultAsync(m => m.Email == email);
 
             if (user == null)
             {
@@ -161,6 +171,38 @@ namespace wishListBackend.Controllers
 
             return NoContent();
         }
+        [HttpPost]
+        [Route("login")]
+        public IActionResult Login([FromBody] User user)
+        {
+            if (user != null)
+            {
+                var existingUser = _context.User.SingleOrDefault(u => u.Email == user.Email);
+                if (existingUser != null)
+                {
+                    if (string.Equals(user.Email, user.Email, StringComparison.CurrentCultureIgnoreCase)
+                         && string.Equals(user.Password, user.Password))
+                    {
+                        string accessToken = GetAccessToken(user);
+
+                        return new ObjectResult(new
+                        {
+                            user.Id,
+                            user.Email,
+                            user.FirstName,
+                            user.SecondName,
+                            access_token = accessToken
+                        });
+                    }
+                    return BadRequest("Username and password don't match.");
+
+                }
+                return BadRequest("Unknown user!");
+            }
+            return BadRequest("NO user!");
+
+        }
+
         //register
         // POST: api/Users
         [HttpPost]
@@ -170,24 +212,28 @@ namespace wishListBackend.Controllers
             {
                 return BadRequest(ModelState);
             }
-            //var test = _userManager.CreateAsync(user, user.Password).Result;
-            //if (!test.Succeeded)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-            //await _signInManager.SignInAsync(user, false);
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
-            string accessToken = GetAccessToken(user);
-
-            return new ObjectResult(new
+            
+            var bestaandeEmail = _context.User.SingleOrDefault(u => u.Email == user.Email);
+            if (bestaandeEmail == null)
             {
-                user.Id,
-                user.Email,
-                user.FirstName,
-                user.SecondName,
-                access_token = accessToken
-            });
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
+
+                return Login(user);
+            }
+            return null;
+            
+            //string accessToken = GetAccessToken(user);f
+
+            //return new ObjectResult(new
+            //{
+            //    user.Id,
+            //    user.Email,
+            //    user.FirstName,
+            //    user.SecondName,
+            //    access_token = accessToken
+            //});
+            
             
 
 

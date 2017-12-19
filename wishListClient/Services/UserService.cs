@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,47 +25,42 @@ namespace wishListClient.Services
             //string method = "POST";
             var stringContent = new StringContent(JsonConvert.SerializeObject(new
             {
-                username = email,
+                email = email,
                 password = password
-            }));
+            }), Encoding.UTF8, "application/json");
             HttpClient httpClient = new HttpClient();
             //WebClient wc = new WebClient();
             httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
             //wc.Headers["Content-Type"] = "application/json";
-            try
+            var response = httpClient.PostAsync(endpoint, stringContent).Result;
+            if (response.IsSuccessStatusCode)
             {
-                var response = httpClient.PostAsync(endpoint, stringContent);
-                //string response = wc.UploadString(endpoint, method, json);
-                return JsonConvert.DeserializeObject<User>(response.ToString());
+                string data = response.Content.ReadAsStringAsync().Result;
+                return JsonConvert.DeserializeObject<User>(data);
             }
-            catch (Exception)
-            {
-                return null;
-            }
+            return null;
         }
         public User GetUserDetails(User user)
         {
-            string endpoint = this.baseUrl + "/users/" + user.Id;
+            string endpoint = this.baseUrl + "/users/" + user.Email;
             string access_token = user.access_token;
 
             HttpClient httpClient = new HttpClient();
             //WebClient wc = new WebClient();
             httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(access_token);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token.ToString());
             //wc.Headers["Authorization"] = access_token;           
-            try
+
+
+            var response = httpClient.GetAsync(endpoint).Result;
+            if (response.IsSuccessStatusCode)
             {
-                //string response = wc.DownloadString(endpoint);
-                var response = httpClient.GetAsync(endpoint);
-                user = JsonConvert.DeserializeObject<User>(response.ToString());
-                user.access_token = access_token;
-                return user;
+                string data = response.Content.ReadAsStringAsync().Result;
+                return JsonConvert.DeserializeObject<User>(data);
             }
-            catch (Exception)
-            {
-                return null;
-            }
+            return null;
+          
         }
         public User RegisterUser(string firstname, string secondname, string email, string password)
         {
