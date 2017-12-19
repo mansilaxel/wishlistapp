@@ -1,0 +1,46 @@
+﻿<Page
+    x:Class="wishListClient.WistListDetail"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:wishListClient"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <StackPanel>
+            <ListView x:Name="lv">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+
+                            <TextBlock x:Name="Name" Text="{Binding Title}" Margin="1,0,30,0"/>
+                            <TextBlock x:Name="Description" Text="{Binding Description}" Margin="1,0,50,0"/>
+                            <TextBlock x:Name="IsBought" Text="{Binding IsBought}" Margin="1,0,10,0"/>
+                            <Button Content="Verwijderen" Click="Delete" Margin="1,0,10,0"></Button>
+                            <Button Content="Detail" Click="Show" Margin="5,0,1,0"></Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+            <Button Content="Wens maken" Click="MakeWish" Margin="10,20,0,50"></Button>
+            <TextBlock x:Name="naam" Text="Deze mensen nemen deel aan de wenslijst" Margin="1,0,10,0"/>
+            <ListView x:Name="lvp" Margin="0,0,0,0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel  Orientation="Horizontal">
+
+                            <TextBlock x:Name="naam" Text="{Binding Email}" Margin="1,0,10,0"/>
+                            <Button Content="Verwijderen van de deelnemers" Click="DeleteParticipant" Margin="1,0,10,0"></Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+            <Button Content="Deelnemer Toevoegen" Click="AddParticipant" Margin="0,0,0,0"></Button>
+            <TextBox x:Name="ParticipantEmail" Width="100px"></TextBox>
+        </StackPanel>
+    </Grid>
+</Page>

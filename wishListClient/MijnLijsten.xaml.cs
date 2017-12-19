@@ -35,6 +35,7 @@ namespace wishListClient
 
         private ObservableCollection<WishList> wishlists;
         private HttpClient client = new HttpClient();
+        
 
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -46,8 +47,6 @@ namespace wishListClient
             var lst = JsonConvert.DeserializeObject<ObservableCollection<WishList>>(json);
             this.wishlists = lst;
             lv.ItemsSource = lst;
-            
-
 
         }
 
@@ -66,6 +65,64 @@ namespace wishListClient
             var nieuwke = JsonConvert.DeserializeObject<WishList>(jsonResp);
 
             wishlists.Add(nieuwke);
+
+        }
+        private async void DeleteWishList(object sender, RoutedEventArgs e)
+        {
+            if (lv.SelectedItem != null)
+            {
+
+                var selectie = lv.SelectedItem as WishList;
+
+
+
+                var res = await client.DeleteAsync(new Uri("http://localhost:51656/api/WishLists/" + selectie.Id));
+                if (res.IsSuccessStatusCode)
+                {
+                    wishlists.Remove(selectie);
+                }
+
+            }
+
+
+        }
+        private async void EditWishList(object sender, RoutedEventArgs e)
+        {
+
+            if (lv.SelectedItem != null)
+            {
+
+                var selectie = lv.SelectedItem as WishList;
+                
+                selectie.Name = "Ik ben gewijzigd, kijk naar mij";
+
+                var json = JsonConvert.SerializeObject(selectie);
+
+                var res = await client.PutAsync(new Uri("http://localhost:51656/api/WishLists/" + selectie.Id),
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+                
+
+
+
+
+
+
+            }
+
+        }
+        private async void ShowWishList(object sender, RoutedEventArgs e)
+        {
+
+            if (lv.SelectedItem != null)
+            {
+
+                var selectie = lv.SelectedItem as WishList;
+
+                Frame.Navigate(typeof(WistListDetail), selectie);
+
+            }
+
+            
 
         }
     }

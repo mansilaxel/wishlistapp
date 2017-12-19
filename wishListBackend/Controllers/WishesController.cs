@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using wishListBackend;
 using wishListBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace wishListBackend.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/Wishes")]
     public class WishesController : Controller
@@ -60,6 +62,7 @@ namespace wishListBackend.Controllers
             {
                 return BadRequest();
             }
+            
 
             _context.Entry(wish).State = EntityState.Modified;
 
@@ -84,12 +87,18 @@ namespace wishListBackend.Controllers
 
         // POST: api/Wishes
         [HttpPost]
-        public async Task<IActionResult> PostWish([FromBody] Wish wish)
+        [Route("~/api/WishList/{id}/Wishes")]
+        public async Task<IActionResult> PostWish([FromRoute] int id,[FromBody] Wish wish)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var wishList = await _context.WishList.Include("Wishes.WishCategory")                
+                .Include("ParticipantOnWishLists.User")
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            wishList.Wishes.Add(wish);
 
             _context.Wish.Add(wish);
             await _context.SaveChangesAsync();

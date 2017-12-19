@@ -31,6 +31,81 @@ namespace wishListBackend.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/WishLists/{id}/Wishes")]
+        public IEnumerable<Wish> GetWishesOnWishList([FromRoute] int id)
+        {
+            //var id = int.Parse(User.Claims.SingleOrDefault(t => t.Type == "id")?.Value);
+            var wishlist = _context.WishList.Include("Wishes.WishCategory").FirstOrDefault(w => w.Id == id);
+
+            return wishlist.Wishes;
+        }
+
+        [HttpGet]
+        [Route("~/api/WishLists/{id}/Participants")]
+        public IEnumerable<User> GetParticipantsOnWishList([FromRoute] int id)
+        {
+            //var id = int.Parse(User.Claims.SingleOrDefault(t => t.Type == "id")?.Value);
+            var participantsOnWishList = _context.ParticipantOnWishList.Include(w=>w.User).Where(w => w.WishListId == id);
+
+            List<User> participants = new List<User>();
+            foreach(var p in participantsOnWishList)
+            {
+                participants.Add(p.User);
+            }
+
+            return participants;
+        }
+        // DELETE: participants
+        [HttpDelete]
+        [Route("~/api/WishLists/ParticipantToRemove/{id}")]
+        public async Task<IActionResult> DeleteParticipantFromWishList([FromRoute] int id)
+        {
+            
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var participant = _context.ParticipantOnWishList.Include(w => w.User).FirstOrDefaultAsync(w => w.UserId == id).Result;
+            
+            
+            if (participant == null)
+            {
+                return NotFound();
+            }
+            _context.ParticipantOnWishList.Remove(participant);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(participant);
+        }
+
+        [HttpPost]
+        [Route("~/api/WishLists/ParticipantToAdd/{email}")]
+        public ParticipantOnWishList PostPartcipantOnWishList([FromRoute] string email,[FromBody] ParticipantOnWishList ponw )
+        {
+            
+            var user = _context.User.FirstOrDefaultAsync(w => w.Email == email).Result;
+            
+            ponw.User = user;
+            
+            ponw.UserId = user.Id;
+           
+
+            var wishlist = _context.WishList.FirstOrDefaultAsync(w => w.Id == ponw.WishListId).Result;
+            
+        
+            
+
+            _context.ParticipantOnWishList.Add(ponw);
+            _context.SaveChanges();
+
+            return ponw;
+        }
+
+        [HttpGet]
         [Route("~/api/MyWishLists")]
         public IEnumerable<WishList> GetMyWishLists()
         {

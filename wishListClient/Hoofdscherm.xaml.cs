@@ -65,7 +65,8 @@ namespace wishListClient
         private async void ToonMijnCategorieen(object sender, RoutedEventArgs e)
         {
             HttpClient client = new HttpClient();
-            var json = client.GetStringAsync(new Uri("http://localhost:51656/api/users/1/MyWishCategories")).Result;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Globals.LoggedInUser.access_token.ToString());
+            var json = client.GetStringAsync(new Uri("http://localhost:51656/api/MyWishCategories")).Result;
             var lst = JsonConvert.DeserializeObject<ObservableCollection<WishCategory>>(json);
             lv.ItemsSource = lst;
         }

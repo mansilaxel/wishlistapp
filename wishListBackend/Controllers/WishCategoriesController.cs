@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using wishListBackend;
 using wishListBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace wishListBackend.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/WishCategories")]
     public class WishCategoriesController : Controller
@@ -29,10 +31,14 @@ namespace wishListBackend.Controllers
         }
         // GET: api/users/userid/MyWishCategories
         [HttpGet]
-        [Route("~/api/users/{userId}/MyWishCategories")]
-        public IEnumerable<WishCategory> GetMyWishCategories([FromRoute] int userId)
+        [Route("~/api/MyWishCategories")]
+        public IEnumerable<WishCategory> GetMyWishCategories()
         {
-            var user = _context.User.Include(u=>u.MyWishCategories).FirstOrDefault(u => u.Id == userId);
+            var id = int.Parse(User.Claims.SingleOrDefault(t => t.Type == "id")?.Value);
+
+            var user = _context.User.Include(u=>u.MyWishCategories)
+                .FirstOrDefault(u => u.Id == id);
+          
             return user.MyWishCategories;
         }
 
