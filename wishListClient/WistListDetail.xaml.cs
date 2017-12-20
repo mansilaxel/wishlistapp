@@ -146,7 +146,11 @@ namespace wishListClient
             var nieuwke = JsonConvert.DeserializeObject<ParticipantOnWishList>(jsonResp);
 
 
-            this.participants.Add(nieuwke.User);
+            if (nieuwke != null)
+            {
+                this.participants.Add(nieuwke.User);
+            }
+           
 
         }
 
