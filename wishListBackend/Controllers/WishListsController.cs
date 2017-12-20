@@ -119,6 +119,30 @@ namespace wishListBackend.Controllers
             return user.MyWishLists;
         }
 
+        [HttpGet]
+        [Route("~/api/ParticipatingOnWishLists")]
+        public IEnumerable<WishList> GetWishListWhereIParticipateOn()
+        {
+            var id = int.Parse(User.Claims.SingleOrDefault(t => t.Type == "id")?.Value);
+
+            var user = _context.User
+                .Include("ParticipantOnWishLists.WishList")
+                .FirstOrDefault(u => u.Id == id);
+
+            var particpatingonthislist = new List<WishList>();
+
+            if (user.ParticipantOnWishLists != null)
+            {
+                foreach(var ponwishlist in user.ParticipantOnWishLists)
+                {
+                    particpatingonthislist.Add(ponwishlist.WishList);
+                }
+            }
+            
+
+            return particpatingonthislist;
+        }
+
         // GET: api/WishLists/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetWishList([FromRoute] int id)

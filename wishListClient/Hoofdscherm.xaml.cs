@@ -57,8 +57,12 @@ namespace wishListClient
 
         private async void ToonDeelnames(object sender, RoutedEventArgs e)
         {
-           
-           
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Globals.LoggedInUser.access_token.ToString());
+            var json = client.GetStringAsync(new Uri("http://localhost:51656/api/ParticipatingOnWishLists")).Result;
+            var lst = JsonConvert.DeserializeObject<ObservableCollection<WishList>>(json);
+            lv.ItemsSource = lst;
+
 
         }
 
